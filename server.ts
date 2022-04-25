@@ -24,6 +24,8 @@ const app = express();
 
 app.use(express.json()); //add body parser to each following route handler
 app.use(cors()) //add CORS support to each following route handler
+app.options('*',cors());
+
 
 const client = new Client(dbConfig);
 client.connect();
@@ -33,7 +35,7 @@ app.get("/", async (req, res) => {
   res.json(dbres.rows);
 });
 
-app.post<{},{},Paste>("/", async (req, res) => {
+app.post<{},{},Paste>("/", cors(), async (req, res) => {
   
   try {
 
