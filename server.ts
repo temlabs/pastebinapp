@@ -2,6 +2,7 @@ import { Client } from "pg";
 import { config } from "dotenv";
 import express from "express";
 import cors from "cors";
+import {Paste} from "./interfaces";
 
 config(); //Read .env file lines as though they were env vars.
 
@@ -18,6 +19,7 @@ const dbConfig = {
   ssl: sslSetting,
 };
 
+
 const app = express();
 
 app.use(express.json()); //add body parser to each following route handler
@@ -29,6 +31,26 @@ client.connect();
 app.get("/", async (req, res) => {
   const dbres = await client.query('select * from categories');
   res.json(dbres.rows);
+});
+
+app.post<{},{},Paste>("/", async (req, res) => {
+  
+  try {
+
+    if (!req.body.content) {
+      throw 'Incorrect body format';
+    }
+
+    const query = 'insert into pastes values(default, default, $1, $2) returning *';
+    const title = req.body.title ?? "";
+    const queryParams = [title, req.body.content]; 
+    
+    const dbres = await client.query(query,queryParams);
+    res.status(201).json(dbres.rows);
+
+  } catch (error) {
+    res.status(404).json(error);
+  }
 });
 
 
