@@ -2,7 +2,7 @@ import { Client } from "pg";
 import { config } from "dotenv";
 import express from "express";
 import cors from "cors";
-import {Paste, PasteFullDetails} from "./interfaces";
+import {Paste} from "./interfaces";
 
 config(); //Read .env file lines as though they were env vars.
 
