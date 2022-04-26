@@ -2,7 +2,7 @@ import { Client } from "pg";
 import { config } from "dotenv";
 import express from "express";
 import cors from "cors";
-import {Paste} from "./interfaces";
+import {Paste, PasteFullDetails} from "./interfaces";
 
 config(); //Read .env file lines as though they were env vars.
 
@@ -30,10 +30,6 @@ app.options('*',cors());
 const client = new Client(dbConfig);
 client.connect();
 
-app.get("/", async (req, res) => {
-  const dbres = await client.query('select * from categories');
-  res.json(dbres.rows);
-});
 
 app.post<{},{},Paste>("/", cors(), async (req, res) => {
   
@@ -55,6 +51,19 @@ app.post<{},{},Paste>("/", cors(), async (req, res) => {
   }
 });
 
+app.get("/", cors(), async (req, res) => {
+  
+  try {
+
+    const query = 'select * from pastes order by paste_date desc limit 10';
+    
+    const dbres = await client.query(query);
+    res.status(200).json(dbres.rows);
+
+  } catch (error) {
+    res.status(404).json(error);
+  }
+});
 
 //Start the server on the given port
 const port = process.env.PORT;
