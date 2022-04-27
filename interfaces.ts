@@ -1,6 +1,6 @@
 export interface Paste {
-    title?: string;
-    content: string;
+    paste_title?: string;
+    paste_content: string;
 }
 
 export interface PasteFullDetails extends Paste {
