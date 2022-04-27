@@ -35,13 +35,13 @@ app.post<{},{},Paste>("/", cors(), async (req, res) => {
   
   try {
 
-    if (!req.body.content) {
+    if (!req.body.paste_content) {
       throw 'Incorrect body format';
     }
 
     const query = 'insert into pastes values(default, default, $1, $2) returning *';
-    const title = req.body.title ?? "";
-    const queryParams = [title, req.body.content]; 
+    const title = req.body.paste_title ?? "";
+    const queryParams = [title, req.body.paste_content]; 
     
     const dbres = await client.query(query,queryParams);
     res.status(201).json(dbres.rows);
