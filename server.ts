@@ -157,6 +157,25 @@ app.delete<{paste_id: string, comment_id: string}>("/pastes/:paste_id/comments/:
 
 });
 
+app.delete<{paste_id: string}>("/pastes/:paste_id/", cors(), async (req, res) => {
+  const paste_id = req.params.paste_id;  
+  try {
+
+    const deleteCommentsQuery = 'delete from comments where paste_id = $1';
+    const queryParams = [paste_id];
+    const deletePastesQuery = 'delete from pastes where paste_id = $1';
+ 
+    const dbres = await client.query(deleteCommentsQuery,queryParams)
+    .then(() => client.query(deletePastesQuery,queryParams))
+    .catch(e => console.log(e))
+    res.status(200).json();
+
+  } catch (error) {
+    res.status(404).json(error);
+  }
+
+});
+
 
 //Start the server on the given port
 const port = process.env.PORT;
